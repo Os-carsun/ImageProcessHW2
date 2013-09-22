@@ -33,12 +33,12 @@ main(int ac,char *av[])
 }
 
 // ######  ######    	#
-// #               # 		#
-// #               #			#
+// #       # 		#
+// #       #		#
 // ######  ######	#
-// #               #			#
-// #	         #			#
-// ######  #			#
+// #       #		#
+// #	   #		#
+// ######  #		#
 int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 {
 	int x,y;
@@ -60,12 +60,12 @@ int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 
 
 // ######  ######    	######
-// #               # 			 #
-// #               #				 #
+// #       # 		     #
+// #       #		     #
 // ######  ######	######
-// #               #			#
-// #	         #			#
-// ######  #			######
+// #       #		#
+// #	   #		#
+// ######  #		######
 
 int effect_2(ImageData *img,ImageData *outimg)
 {
