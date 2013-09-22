@@ -32,7 +32,7 @@ main(int ac,char *av[])
 
 }
 
-// ######  ######    	#
+// ######  ######   #
 // #       # 		#
 // #       #		#
 // ######  ######	#
@@ -41,6 +41,7 @@ main(int ac,char *av[])
 // ######  #		#
 int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 {
+	//線性處裡 
 	int x,y;
 	int i;
 	int val;
@@ -48,7 +49,10 @@ int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
-			val = getPixel(img,x,y,&pix);	
+			val = getPixel(img,x,y,&pix);//取的圖片中的每個PIXEL
+			//線性函數
+			// (( param2 - param1 )/255) * pi + param1 
+			//將每個PIXEL的RGB帶入函數中做轉換
 			pix.r = ((param2-param1)*pix.r)/255+param1;
 			pix.g = ((param2-param1)*pix.g)/255+param1;
 			pix.b = ((param2-param1)*pix.b)/255+param1;
@@ -59,7 +63,7 @@ int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 }
 
 
-// ######  ######    	######
+// ######  ######   ######
 // #       # 		     #
 // #       #		     #
 // ######  ######	######
@@ -69,6 +73,7 @@ int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 
 int effect_2(ImageData *img,ImageData *outimg)
 {
+	//參數自動補正(直方圖伸長)
 	int x,y;
 	int i;
 	int val;
@@ -78,6 +83,7 @@ int effect_2(ImageData *img,ImageData *outimg)
 
     param1=300;
     param2=-300;
+    	//找出最暗 跟最亮的 PIXEL
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
 			val = getPixel(img,x,y,&pix);	
@@ -89,6 +95,7 @@ int effect_2(ImageData *img,ImageData *outimg)
 	}
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
+			//P0 =   255*( (Pi-param1)/(param2-param1) )
 			val = getPixel(img,x,y,&pix);	
 			pix.r = (255*(pix.r-param1))/(param2-param1);
 			pix.g = (255*(pix.g-param1))/(param2-param1);
@@ -99,30 +106,36 @@ int effect_2(ImageData *img,ImageData *outimg)
 	return 0;
 }
 
-// ######  ######    	######
-// #               # 			 #
-// #               #				 #
+// ######  ######   ######
+// #       # 		     #
+// #       #		     #
 // ######  ######	######
-// #               #				 #
-// #	         #				 #
-// ######  #			######
+// #       #		     #
+// #	   #		     #
+// ######  #		######
 
 int effect_3(ImageData *img,ImageData *outimg,int gammaint)
 {
+	//伽瑪補正
 	int x,y;
 	int i;
 	int val;
 	double gamma;
 	double a;
-	int color_tbl[256];
+	int color_tbl[256];//用來存補正後的亮度
 	Pixel pix;
-
+	
+	//轉換成正確的伽瑪值
 	gamma=(double)gammaint/100.0;
-
+	
+	//建立起色彩的亮度的陣列 提高效率減少負荷
 	for(i=0;i<256;i++) {
+		//P0 = M((Pi/M)^r),
+		// M = 255, r = gamma, pi = a
 		a=(double)i/255.0;
 		color_tbl[i]=(int)(pow(a,gamma)*255.0);
 	}
+	//開始亮度轉,換根據現在亮度去找陣列中的值
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
 			getPixel(img,x,y,&pix);
@@ -134,30 +147,38 @@ int effect_3(ImageData *img,ImageData *outimg,int gammaint)
 	}
 	return 0;
 }
-// ######  ######    	#	 #
-// #               # 		#	 #
-// #               #			#	 #
+// ######  ######   #    #
+// #       # 		#    #
+// #       #		#    #
 // ######  ######	######
-// #               #				 #
-// #	         #				 #
-// ######  #				 #
+// #       #		     #
+// #	   #		     #
+// ######  #		     #
 int effect_4(ImageData *img,ImageData *outimg,int gammaint)
 {
+	//伽瑪補正
 	int x,y;
 	int i;
 	int val;
 	double gamma;
 	double a;
-	int color_tbl[256];
+	int color_tbl[256];//用來存補正後的亮度
 	Pixel pix;
-
+	
+	//轉換成正確的伽瑪值
 	gamma=(double)gammaint/100.0;
 
+	//建立起色彩的亮度的陣列 提高效率減少負荷
 	for(i=0;i<256;i++) {
+		//sigmoid 函數的應用
+		//f(x) = 1 /( 1 + e^(-x) )
+		//x = a 
+		//最後在乘上255當作亮度
 		a=(double)(i-128)/(255.0);
 		a*=gamma;
 		color_tbl[i]=(int) (255.0/(1.0+exp(-a)) );
 	}
+	//開始亮度轉,換根據現在亮度去找陣列中的值
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
 			getPixel(img,x,y,&pix);	
@@ -169,15 +190,16 @@ int effect_4(ImageData *img,ImageData *outimg,int gammaint)
 	}
 	return 0;
 }
-// ######  ######    	######	
-// #               # 		#	 
-// #               #			#	 
+// ######  ######   ######	
+// #       # 		#	 
+// #       #		#	 
 // ######  ######	######
-// #               #				 #
-// #	         #				 #
-// ######  #			######
-int getMinMax(int *hist,int *min,int *max,int *pixs_min,int *pixs_max,int ave)
+// #       #		     #
+// #	   #		     #
+// ######  #		######
+int getMinMax(int *hist, int *min, int *max, int *pixs_min, int *pixs_max, int ave)
 {
+	//找最大亮度跟最小亮度並作分配
 	int i;
 	int rest;
 	int now;
@@ -186,7 +208,9 @@ int getMinMax(int *hist,int *min,int *max,int *pixs_min,int *pixs_max,int ave)
 
 	rest=0;
 	now=0;
+	
 	for(i=0;i<256;i++) {
+		//取得PIXEL數量
 		pixels=rest+hist[i];
 		min[i]=now;
 		if(rest>0) pixs_min[i]=ave-rest;
@@ -198,6 +222,7 @@ int getMinMax(int *hist,int *min,int *max,int *pixs_min,int *pixs_max,int ave)
 		else pixs_max[i]=ave+100;
 		now+=a;
 	}
+	//最大值為255超過還是255
 	for(i=0;i<255;i++) {
 		if(min[i]>255) min[i]=255;
 		if(max[i]>255) max[i]=255;
@@ -227,6 +252,7 @@ int getHistEqu(int x,int *now,int *min,int *max,int *pix_min,int *pix_max)
 
 int effect_5(ImageData *img,ImageData *outimg)
 {
+	//直方圖均等化處理
 	int x,y;
 	int rr,gg,bb;
 	int ro,go,bo;
@@ -241,11 +267,15 @@ int effect_5(ImageData *img,ImageData *outimg)
 	int onowR[256],onowG[256],onowB[256];
 	Pixel pix;
 
+	//初始化陣列
 	for(i=0;i<256;i++) {
 		histR[i]=histG[i]=histB[i]=0;
 	}
+	//這張圖片每個亮度平均要有幾個PIXEL數
 	ave= img->height * img->width /256;  
 
+	//參考圖片中的每個PIXEL
+	//並記錄每個色彩的亮度出現次數
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
 			getPixel(img,x,y,&pix);	
@@ -257,10 +287,11 @@ int effect_5(ImageData *img,ImageData *outimg)
 			histB[bb]++;
 		}
 	}
-
+	//找出R G B 分別的最大亮度跟最小亮度並作分配
 	getMinMax(histR,ominR,omaxR,pix_minR,pix_maxR,ave);
 	getMinMax(histG,ominG,omaxG,pix_minG,pix_maxG,ave);
 	getMinMax(histB,ominB,omaxB,pix_minB,pix_maxB,ave);
+	
 	for(i=0;i<256;i++) {
 		onowR[i]=ominR[i];
 		onowG[i]=ominG[i];
@@ -285,11 +316,11 @@ int effect_5(ImageData *img,ImageData *outimg)
 	return 0;
 }
 // ######  ######    	######	
-// #               # 		#	 
-// #               #			#	 
-// ######  ######	######
-// #               #			#	 #
-// #	         #			#	 #
+// #       # 		    #	 
+// #       #			#	 
+// ######  ######	    ######
+// #       #			#	 #
+// #	   #			#	 #
 // ######  #			######
 void setMatrix(double *mat,int idx,double x)
 {
@@ -342,12 +373,12 @@ int effect_6(ImageData *img,ImageData *outimg,int i1,int o1,int i2,int o2)
 	return 0;
 }
 // ######  ######    	######	
-// #               # 		#	 #
-// #               #			#	 #	 
-// ######  ######	           #
-// #               #			         #
-// #	         #			        #
-// ######  #			       #
+// #       # 		    #	 #
+// #       #			#	 #	 
+// ######  ######	        #
+// #       #			   #
+// #	   #			  #
+// ######  #			 #
 int effect_7(ImageData *img,ImageData *out)
 {
 	int x,y;
@@ -366,11 +397,11 @@ int effect_7(ImageData *img,ImageData *out)
 	return 0;
 }
 // ######  ######    	######	
-// #               # 		#	 #
-// #               #			#	 #
-// ######  ######	######
-// #               #			#	 #
-// #	         #			#	 #
+// #       # 		    #	 #
+// #       #			#	 #
+// ######  ######	    ######
+// #       #			#	 #
+// #	   #			#	 #
 // ######  #			######
 void makeColorTable(int *tbl,int wave)
 {
@@ -419,11 +450,11 @@ int effect_8(ImageData *img,ImageData *out,int wave)
 }
 
 // ######  ######    	######	
-// #               # 		#	 #
-// #               #			#	 #
-// ######  ######	######
-// #               #				 #
-// #	         #				 #
+// #       # 		    #	 #
+// #       #			#	 #
+// ######  ######	    ######
+// #       #				 #
+// #	   #				 #
 // ######  #			######
 
 int effect(ImageData *img,ImageData *outimg,int ef)
@@ -488,12 +519,12 @@ int effect(ImageData *img,ImageData *outimg,int ef)
 	return 0;
 }
 
-// ######  ######     #	######	
-// #               # 	     #	#	 #
-// #               #		     #	#	 #
-// ######  ######     #	#	 #
-// #               #		     #	#	 #
-// #	         #		     #	#	 #
+// ######  ######        #	######	
+// #       # 	         #	#	 #
+// #       #		     #	#	 #
+// ######  ######        #	#	 #
+// #       #		     #	#	 #
+// #	   #		     #	#	 #
 // ######  #		     #	######
 
 int effect_10(ImageData *img,ImageData *outimg)
@@ -537,13 +568,13 @@ int effect_10(ImageData *img,ImageData *outimg)
 	}
 	return 1;
 }
-// ######  ######        #	             #	
-// #               # 	        #		 #
-// #               #		        #		 #
+// ######  ######        #       #	
+// #       # 	         #		 #
+// #       #		     #		 #
 // ######  ######        #		 #
-// #               #		        #		 #
-// #	         #		        #		 #
-// ######  #		        #		 #
+// #       #		     #		 #
+// #	   #		     #		 #
+// ######  #		     #		 #
 int effect_11(ImageData *img,ImageData *outimg)
 {
 
@@ -585,13 +616,13 @@ int effect_11(ImageData *img,ImageData *outimg)
 	}
 	return 1;
 }
-// ######  ######        #	             ######	
-// #               # 	        #		 	  #
-// #               #		        #		 	  #
-// ######  ######        #		 ######
-// #               #		        #		 #
-// #	         #		        #		 #
-// ######  #		        #		 ######
+// ######  ######       #	     ######	
+// #       # 	        #		 	  #
+// #       #		    #		 	  #
+// ######  ######       #		 ######
+// #       #		    #		 #
+// #	   #		    #		 #
+// ######  #		    #		 ######
 
 int effect_12(ImageData *img,ImageData *outimg)
 {
@@ -635,13 +666,13 @@ int effect_12(ImageData *img,ImageData *outimg)
 	return 1;
 }
 
-// ######  ######        #	             ######	
-// #               # 	        #		 	  #
-// #               #		        #		 	  #
-// ######  ######        #		 ######
-// #               #		        #		 	  #
-// #	         #		        #		 	  #
-// ######  #		        #		 ######
+// ######  ######       #        ######	
+// #       # 	        #		 	  #
+// #       #		    #		 	  #
+// ######  ######       #		 ######
+// #       #		    #		 	  #
+// #	   #		    #		 	  #
+// ######  #		    #		 ######
 
 int effect_13(ImageData *img,ImageData *outimg)
 {
