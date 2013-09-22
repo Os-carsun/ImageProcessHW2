@@ -1,36 +1,10 @@
+#include <stdio.h> 
+#include <math.h>  
 #include "image.h"
-#include <stdlib.h>
 
 #define COLORS 256
 
-main(int ac,char *av[])
-{
-	ImageData *img,*outimg;
-	int res;
-	int x,y,mx,my;
 
-	if(ac<4) {
-		printf("		");
-		return;
-	}
-
-
-	res=readBMPfile(av[1],&img);
-	if(res<0) {
-		printf("		");
-		return;
-	}
-
-
-	outimg=createImage(img->width,img->height,24);
-	
-	effect(img,outimg,atoi(av[3]),atoi(av[4]));
-
-	writeBMPfile(av[2],outimg);
-	disposeImage(img);
-	disposeImage(outimg);
-
-}
 
 // ######  ######       #
 // #       # 		#
@@ -330,6 +304,107 @@ void setMatrix(double *mat,int idx,double x)
 	mat[idx+3]=1.0;
 }
 
+void PFree(void *adr)
+{
+	if(adr==NULL) return;
+	free(adr);
+}
+
+double lu(int n,double *a,int *ip)
+{
+	int i,j,k,ii,ik;
+	double t,u,det;
+	double *weight;
+
+	weight=(double*)malloc(sizeof(double)*n);
+	det=0;
+	for(k=0;k<n;k++) {
+		ip[k]=k;
+		u=0;
+		for(j=0;j<n;j++) {
+			t=fabs(a[k*n+j]);
+			if(t>u) u=t;
+		}
+		if(u==0) goto EXIT;
+		weight[k]=1/u;
+	}
+	det=1;
+	for(k=0;k<n;k++) {
+		u=-1;
+		for(i=k;i<n;i++) {
+			ii=ip[i];
+			t=fabs(a[ii*n+k])*weight[ii];
+			if(t>u) {
+				u=t;	j=i;
+			}
+		}
+		ik=ip[j];
+		if(j!=k) {
+			ip[j]=ip[k];
+			ip[k]=ik;
+			det= -det;
+		}
+		u=a[ik*n+k];
+		det*=u;
+		if(u==0) goto EXIT;
+		for(i=k+1;i<n;i++) {
+			ii=ip[i];
+			t=(a[ii*n+k]/=u);
+			for(j=k+1;j<n;j++) {
+				a[ii*n+j]-= t*a[ik*n+j];
+			}
+		}
+	}
+EXIT:
+	PFree(weight);
+	return det;
+}
+
+void solve(int n,double *a,double *b,int *ip,double *x)
+{
+	int i,j,ii;
+	double t;
+
+	for(i=0;i<n;i++) {
+		ii=ip[i];	t=b[ii];
+		for(j=0;j<i;j++) {
+			t -= a[ii*n+j]*x[j];
+		}
+		x[i]=t;
+	}
+	for(i=n-1;i>=0;i--) {
+		t=x[i];	ii=ip[i];
+		for(j=i+1;j<n;j++) {
+			t -= a[ii*n+j]*x[j];
+		}
+		x[i]=t/a[ii*n+i];
+	}
+}
+
+int solveSystemOfLinearEquations(int n,double *mat,double *vec,double *ans)
+{
+	double det;
+	double *mat2;
+	int *ip;
+	int i,j,nn;
+	char bbb[256],sbuf[256];
+
+	ip=(int*)malloc(sizeof(int)*n);
+	if(ip==NULL) return -1;
+	nn=n*n;
+	mat2=(double*)malloc(sizeof(double)*nn);
+	if(mat2==NULL) {
+		PFree(ip);
+		return -1;
+	}
+	for(i=0;i<nn;i++) mat2[i]=mat[i];
+	det=lu(n,mat2,ip);
+	if(det==0) return -2;
+	solve(n,mat2,vec,ip,ans);
+	PFree(ip);
+	PFree(mat2);
+	return 1;
+}
 int effect_6(ImageData *img,ImageData *outimg,int i1,int o1,int i2,int o2)
 {	//依多項式進行色調變換處理的程式
 	int x,y;
@@ -716,4 +791,79 @@ int effect_13(ImageData *img,ImageData *outimg)
 		}
 	}
 	return 1;
+}
+int main(int ac,char *av[])
+{
+	
+	char inputFile[100];
+	char outputFile[100];
+	ImageData *img,*outimg;
+	int i,k,res,p1,p2;
+
+	for( i = 0; i < 20; i++){
+		for (k = 0; k < 20; ++k)
+		{
+			if(k%19 == 0|| i%19==0){
+				printf("+");
+			}
+			else if(k%19 == 1){
+				printf(" %2d EF %2d ",i,i);
+			}
+			else if(k%20>10)
+				printf(" ");
+		}
+		printf("\n");
+	}
+
+	scanf("%d",&i);
+	printf("enter inputFile:\t");
+	scanf("%s",inputFile);
+	
+	res=readBMPfile(av[1],&img);
+	if(res<0) {
+		printf("	can't read this file\n");
+		return -1;
+	}
+
+	printf("enter outputFile:\t");
+	scanf("%s",outputFile);
+	outimg=createImage(img->width,img->height,24);
+	
+	switch (i){
+		case 1: 
+			printf("enter 2 param\n");
+			scanf("%d,%d",&p1,&p2);
+			effect_1(img,outimg,p1,p2);
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
+		case 6:
+			break;			
+		case 7:
+			break;
+		case 8:
+			break;
+		case 9:
+			break;
+		case 10:
+			break;
+		case 11:
+			break;
+		case 12:
+			break;
+		case 13:
+			break;																		
+	}
+
+	writeBMPfile(outputFile,outimg);
+	disposeImage(img);
+	disposeImage(outimg);
+
+	return 0;
 }
