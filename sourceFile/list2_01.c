@@ -63,7 +63,7 @@ int effect_1(ImageData *img,ImageData *outimg,int param1,int param2)
 }
 
 
-// ######  ######   ######
+// ######  ######       ######
 // #       # 		     #
 // #       #		     #
 // ######  ######	######
@@ -106,7 +106,7 @@ int effect_2(ImageData *img,ImageData *outimg)
 	return 0;
 }
 
-// ######  ######   ######
+// ######  ######       ######
 // #       # 		     #
 // #       #		     #
 // ######  ######	######
@@ -147,7 +147,7 @@ int effect_3(ImageData *img,ImageData *outimg,int gammaint)
 	}
 	return 0;
 }
-// ######  ######   #    #
+// ######  ######       #    #
 // #       # 		#    #
 // #       #		#    #
 // ######  ######	######
@@ -190,7 +190,7 @@ int effect_4(ImageData *img,ImageData *outimg,int gammaint)
 	}
 	return 0;
 }
-// ######  ######   ######	
+// ######  ######       ######	
 // #       # 		#	 
 // #       #		#	 
 // ######  ######	######
@@ -316,12 +316,12 @@ int effect_5(ImageData *img,ImageData *outimg)
 	return 0;
 }
 // ######  ######    	######	
-// #       # 		    #	 
-// #       #			#	 
-// ######  ######	    ######
-// #       #			#	 #
-// #	   #			#	 #
-// ######  #			######
+// #       #            #	 
+// #       #            #	 
+// ######  ######       ######
+// #       #            #    #
+// #	   #            #    #
+// ######  #            ######
 void setMatrix(double *mat,int idx,double x)
 {
 	mat[idx  ]=x*x*x;
@@ -373,12 +373,12 @@ int effect_6(ImageData *img,ImageData *outimg,int i1,int o1,int i2,int o2)
 	return 0;
 }
 // ######  ######    	######	
-// #       # 		    #	 #
-// #       #			#	 #	 
-// ######  ######	        #
-// #       #			   #
-// #	   #			  #
-// ######  #			 #
+// #       #            #    #
+// #       #            #    #	 
+// ######  ######           #
+// #       #               #
+// #	   #              #
+// ######  #             #
 int effect_7(ImageData *img,ImageData *out)
 {
 	int x,y;
@@ -396,13 +396,13 @@ int effect_7(ImageData *img,ImageData *out)
 	}
 	return 0;
 }
-// ######  ######    	######	
-// #       # 		    #	 #
-// #       #			#	 #
+// ######  ######           ######	
+// #       #                #    #
+// #       #                #    #
 // ######  ######	    ######
-// #       #			#	 #
-// #	   #			#	 #
-// ######  #			######
+// #       #                #    #
+// #	   #                #    #
+// ######  #                ######
 void makeColorTable(int *tbl,int wave)
 {
 	int i,j;
@@ -449,13 +449,13 @@ int effect_8(ImageData *img,ImageData *out,int wave)
 	return 0;
 }
 
-// ######  ######    	######	
-// #       # 		    #	 #
-// #       #			#	 #
-// ######  ######	    ######
-// #       #				 #
-// #	   #				 #
-// ######  #			######
+// ######  ######       ######	
+// #       #            #    #
+// #       #            #    #
+// ######  ######       ######
+// #       #                 #
+// #	   #                 #
+// ######  #            ######
 
 int effect(ImageData *img,ImageData *outimg,int ef)
 {
@@ -520,12 +520,12 @@ int effect(ImageData *img,ImageData *outimg,int ef)
 }
 
 // ######  ######        #	######	
-// #       # 	         #	#	 #
-// #       #		     #	#	 #
-// ######  ######        #	#	 #
-// #       #		     #	#	 #
-// #	   #		     #	#	 #
-// ######  #		     #	######
+// #       # 	         #	#    #
+// #       #             #	#    #
+// ######  ######        #	#    #
+// #       #		 #	#    #
+// #	   #		 #	#    #
+// ######  #		 #	######
 
 int effect_10(ImageData *img,ImageData *outimg)
 {
@@ -568,13 +568,13 @@ int effect_10(ImageData *img,ImageData *outimg)
 	}
 	return 1;
 }
-// ######  ######        #       #	
-// #       # 	         #		 #
-// #       #		     #		 #
-// ######  ######        #		 #
-// #       #		     #		 #
-// #	   #		     #		 #
-// ######  #		     #		 #
+// ######  ######        #      #	
+// #       # 	         #	#
+// #       #             #	#
+// ######  ######        #	#
+// #       #             #	#
+// #	   #             #	#
+// ######  #             #	#
 int effect_11(ImageData *img,ImageData *outimg)
 {
 
@@ -616,13 +616,13 @@ int effect_11(ImageData *img,ImageData *outimg)
 	}
 	return 1;
 }
-// ######  ######       #	     ######	
-// #       # 	        #		 	  #
-// #       #		    #		 	  #
-// ######  ######       #		 ######
-// #       #		    #		 #
-// #	   #		    #		 #
-// ######  #		    #		 ######
+// ######  ######       #     ######	
+// #       # 	        # 	   #
+// #       #		#	   #
+// ######  ######       #     ######
+// #       #		#     #
+// #	   #		#     #
+// ######  #		#     ######
 
 int effect_12(ImageData *img,ImageData *outimg)
 {
@@ -666,13 +666,13 @@ int effect_12(ImageData *img,ImageData *outimg)
 	return 1;
 }
 
-// ######  ######       #        ######	
-// #       # 	        #		 	  #
-// #       #		    #		 	  #
-// ######  ######       #		 ######
-// #       #		    #		 	  #
-// #	   #		    #		 	  #
-// ######  #		    #		 ######
+// ######  ######       #   ######	
+// #       # 	        #        #
+// #       #		#        #
+// ######  ######       #   ######
+// #       #		#        #
+// #	   #		#        #
+// ######  #		#   ######
 
 int effect_13(ImageData *img,ImageData *outimg)
 {
