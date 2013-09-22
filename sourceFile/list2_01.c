@@ -331,7 +331,7 @@ void setMatrix(double *mat,int idx,double x)
 }
 
 int effect_6(ImageData *img,ImageData *outimg,int i1,int o1,int i2,int o2)
-{
+{	//依多項式進行色調變換處理的程式
 	int x,y;
 	int i;
 	int val;
@@ -380,14 +380,15 @@ int effect_6(ImageData *img,ImageData *outimg,int i1,int o1,int i2,int o2)
 // #	   #              #
 // ######  #             #
 int effect_7(ImageData *img,ImageData *out)
-{
+{	
+	//負片化處理
 	int x,y;
 	Pixel pix,pix2;
 
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
 			getPixel(img,x,y,&pix);
-
+			//取亮度的相反值
 			pix2.r = 255 - pix.r;
 			pix2.g = 255 - pix.g;
 			pix2.b = 255 - pix.b;
@@ -405,6 +406,7 @@ int effect_7(ImageData *img,ImageData *out)
 // ######  #                ######
 void makeColorTable(int *tbl,int wave)
 {
+	//過度曝光
 	int i,j;
 	int val;
 	int mts;
