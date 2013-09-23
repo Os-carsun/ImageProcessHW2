@@ -808,28 +808,32 @@ int main(int ac,char *av[])
 	char inputFile[100];
 	char outputFile[100];
 	ImageData *img,*outimg;
-	int i,k,res,p1,p2,p3,p4;
+	int i,k,res,p1,p2,p3,p4,which;
+	which = 0;	
 	while(1){
-		for( i = 0; i < 20; i++){
-			for (k = 0; k < 20; ++k)
+		for( i = 0; i < 15; i++){
+			for (k = 0; k < 15; ++k)
 			{
-				if(k%19 == 0|| i%19==0){
+				if(k%14 == 0|| i%14==0){
 					printf("+");
 				}
-				else if(k%19 == 1){
-					printf(" %2d EF %2d ",i,i);
+				else if(k%14 == 1){
+					printf("NO.%2d  EF%2d ",i,i);
 				}
-				else if(k%20>10)
+				else if(k%14>12)
 					printf(" ");
 			}
 			printf("\n");
 		}
 		printf("\n");
-		scanf("%d",&i);
+
+		while(!which)
+			scanf("%d",&which);
+		
 		printf("enter inputFile:\t");
 		scanf("%s",inputFile);
 		
-		res=readBMPfile(av[1],&img);
+		res=readBMPfile(inputFile,&img);
 		if(res<0) {
 			printf("	can't read this file\n");
 			return -1;
@@ -839,7 +843,7 @@ int main(int ac,char *av[])
 		scanf("%s",outputFile);
 		outimg=createImage(img->width,img->height,24);
 		
-		switch (i){
+		switch (which){
 			case 1: 
 				printf("enter 2 param\n");
 				scanf("%d,%d",&p1,&p2);
@@ -896,6 +900,7 @@ int main(int ac,char *av[])
 		writeBMPfile(outputFile,outimg);
 		disposeImage(img);
 		disposeImage(outimg);
+		which=0;
 	}	
 	return 0;
 }
