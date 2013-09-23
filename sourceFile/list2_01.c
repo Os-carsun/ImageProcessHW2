@@ -487,7 +487,7 @@ void makeColorTable(int *tbl,int wave)
 	int mts;
 	int center;
 
-
+	//權重分配
 	mts=COLORS/wave;
 
 	center=COLORS/(wave*2);
@@ -508,11 +508,12 @@ void makeColorTable(int *tbl,int wave)
 
 int effect_8(ImageData *img,ImageData *out,int wave)
 {
+	//過度曝光
 	int x,y;
 	int val;
 	int sora_tbl[COLORS];
 	Pixel pix,pix2;
-
+	//建立亮度陣列減低系統負擔 並加快執行速率
 	makeColorTable(sora_tbl, wave);
 	for(y=0;y<img->height;y++) {
 		for(x=0;x<img->width;x++) {
@@ -534,8 +535,9 @@ int effect_8(ImageData *img,ImageData *out,int wave)
 // #	   #                 #
 // ######  #            ######
 
-int effect(ImageData *img,ImageData *outimg,int ef)
+int effect_9(ImageData *img,ImageData *outimg,int ef)
 {
+	//單純平滑化
 	int x,y;
 	int i;
 	int val;
@@ -563,7 +565,7 @@ int effect(ImageData *img,ImageData *outimg,int ef)
 			sumr[smx]=sumg[smx]=sumb[smx]=0;
 			for(yy=-ef;yy<=ef;yy++) {
 				val = getPixel(img,x+xx,y+yy,&pix);	
-
+				//計算每種顏色的各種亮度出現次數
 				sumr[smx]+=pix.r;
 				sumg[smx]+=pix.g;
 				sumb[smx]+=pix.b;
@@ -606,7 +608,8 @@ int effect(ImageData *img,ImageData *outimg,int ef)
 
 int effect_10(ImageData *img,ImageData *outimg)
 {
-
+	//加權平均平滑化
+	//平滑矩陣
     int fil[9]={
     	 1, 1, 1,
     	 1, 4, 1,
@@ -630,6 +633,7 @@ int effect_10(ImageData *img,ImageData *outimg)
 			rr=gg=bb=0;
 			for(yy=-1;yy<=1;yy++) {			
 				for(xx=-1;xx<=1;xx++) {
+					//對應陣列乘上值
 	    			val = getPixel(img,x+xx,y+yy,&pix);	
 					rr += pix.r * fil[ff];
 					gg += pix.g * fil[ff];
@@ -637,6 +641,7 @@ int effect_10(ImageData *img,ImageData *outimg)
 					ff++;
 				}
 			}
+			// 乘完矩陣在除以平均值
 			pix.r=rr/12;
 			pix.g=gg/12;
 			pix.b=bb/12;
@@ -654,7 +659,8 @@ int effect_10(ImageData *img,ImageData *outimg)
 // ######  #             #	#
 int effect_11(ImageData *img,ImageData *outimg)
 {
-
+	//邊緣抽出
+	//此陣列有邊緣方向性
     int fil[9]={
     	 0,-1, 0,
     	-1, 0, 1,
@@ -678,6 +684,7 @@ int effect_11(ImageData *img,ImageData *outimg)
 			rr=gg=bb=0;
 			for(yy=-1;yy<=1;yy++) {			
 				for(xx=-1;xx<=1;xx++) {
+					//對應陣列乘上值
 	    			val = getPixel(img,x+xx,y+yy,&pix);	
 					rr += pix.r * fil[ff];
 					gg += pix.g * fil[ff];
@@ -704,6 +711,7 @@ int effect_11(ImageData *img,ImageData *outimg)
 int effect_12(ImageData *img,ImageData *outimg)
 {
 
+	//尖銳化
     int fil[9]={
     	 0,-1, 0,
     	 -1, 5,-1,
@@ -727,6 +735,7 @@ int effect_12(ImageData *img,ImageData *outimg)
 			rr=gg=bb=0;
 			for(yy=-1;yy<=1;yy++) {			
 				for(xx=-1;xx<=1;xx++) {
+					//對應陣列乘上值
 	    			val = getPixel(img,x+xx,y+yy,&pix);	
 					rr += pix.r * fil[ff];
 					gg += pix.g * fil[ff];
@@ -753,7 +762,7 @@ int effect_12(ImageData *img,ImageData *outimg)
 
 int effect_13(ImageData *img,ImageData *outimg)
 {
-
+	//浮雕處理
     int fil[9]={
     	 0, 0, 0,
     	-1, 0, 1,
@@ -777,6 +786,7 @@ int effect_13(ImageData *img,ImageData *outimg)
 			rr=gg=bb=0;
 			for(yy=-1;yy<=1;yy++) {			
 				for(xx=-1;xx<=1;xx++) {
+					//對應陣列乘上值
 	    			val = getPixel(img,x+xx,y+yy,&pix);	
 					rr += pix.r * fil[ff];
 					gg += pix.g * fil[ff];
@@ -798,72 +808,94 @@ int main(int ac,char *av[])
 	char inputFile[100];
 	char outputFile[100];
 	ImageData *img,*outimg;
-	int i,k,res,p1,p2;
-
-	for( i = 0; i < 20; i++){
-		for (k = 0; k < 20; ++k)
-		{
-			if(k%19 == 0|| i%19==0){
-				printf("+");
+	int i,k,res,p1,p2,p3,p4;
+	while(1){
+		for( i = 0; i < 20; i++){
+			for (k = 0; k < 20; ++k)
+			{
+				if(k%19 == 0|| i%19==0){
+					printf("+");
+				}
+				else if(k%19 == 1){
+					printf(" %2d EF %2d ",i,i);
+				}
+				else if(k%20>10)
+					printf(" ");
 			}
-			else if(k%19 == 1){
-				printf(" %2d EF %2d ",i,i);
-			}
-			else if(k%20>10)
-				printf(" ");
+			printf("\n");
 		}
 		printf("\n");
-	}
+		scanf("%d",&i);
+		printf("enter inputFile:\t");
+		scanf("%s",inputFile);
+		
+		res=readBMPfile(av[1],&img);
+		if(res<0) {
+			printf("	can't read this file\n");
+			return -1;
+		}
 
-	scanf("%d",&i);
-	printf("enter inputFile:\t");
-	scanf("%s",inputFile);
-	
-	res=readBMPfile(av[1],&img);
-	if(res<0) {
-		printf("	can't read this file\n");
-		return -1;
-	}
+		printf("enter outputFile:\t");
+		scanf("%s",outputFile);
+		outimg=createImage(img->width,img->height,24);
+		
+		switch (i){
+			case 1: 
+				printf("enter 2 param\n");
+				scanf("%d,%d",&p1,&p2);
+				effect_1(img,outimg,p1,p2);
+				break;
+			case 2:
+				effect_2(img,outimg);
+				break;
+			case 3:
+				printf("enter gamma val\n");
+				scanf("%d",&p1);
+				effect_3(img,outimg,p1);
+				break;
+			case 4:
+				printf("enter gamma val\n");
+				scanf("%d",&p1);
+				effect_4(img,outimg,p1);			
+				break;
+			case 5:
+				effect_5(img,outimg);
+				break;
+			case 6:
+				printf("enter i1,o1,i2,o2\n");
+				scanf("%d%d%d%d",&p1,&p2,&p3,&p4);
+				effect_6(img,outimg,p1,p2,p3,p4);
+				break;			
+			case 7:
+				effect_7(img,outimg);
+				break;
+			case 8:
+				printf("enter wave \n");
+				scanf("%d",&p1);
+				effect_8(img,outimg,p1);
+				break;
+			case 9:
+				printf("enter ef\n");
+				scanf("%d",&p1);
+				effect_9(img,outimg,p1);
+				break;
+			case 10:
+				effect_10(img,outimg);
+				break;
+			case 11:
+				effect_11(img,outimg);
+				break;
+			case 12:
+				effect_12(img,outimg);
+				break;
+			case 13:
+				effect_13(img,outimg);
+				break;																		
+		}
 
-	printf("enter outputFile:\t");
-	scanf("%s",outputFile);
-	outimg=createImage(img->width,img->height,24);
-	
-	switch (i){
-		case 1: 
-			printf("enter 2 param\n");
-			scanf("%d,%d",&p1,&p2);
-			effect_1(img,outimg,p1,p2);
-			break;
-		case 2:
-			break;
-		case 3:
-			break;
-		case 4:
-			break;
-		case 5:
-			break;
-		case 6:
-			break;			
-		case 7:
-			break;
-		case 8:
-			break;
-		case 9:
-			break;
-		case 10:
-			break;
-		case 11:
-			break;
-		case 12:
-			break;
-		case 13:
-			break;																		
-	}
-
-	writeBMPfile(outputFile,outimg);
-	disposeImage(img);
-	disposeImage(outimg);
-
+		writeBMPfile(outputFile,outimg);
+		disposeImage(img);
+		disposeImage(outimg);
+	}	
 	return 0;
 }
